@@ -1,0 +1,193 @@
+<html>
+    <head>
+        <title>Cadastro Rural</title>
+        <meta name="description" content="Codate - Curso Kendoui" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta charset="utf-8" />
+            
+        <link rel="stylesheet" type="text/css" href="../style/kendo.common.min.css" />
+        <link rel="stylesheet" type="text/css" href="../style/kendo.default.min.css" />
+        <link rel="stylesheet" type="text/css" href="../style/codate.css" />
+        
+        <script src="../js/libs/jquery.min.js"></script>
+        <script src="../js/libs/kendo.web.min.js"></script>  
+        <script src="../js/app.js"></script>  
+    </head>
+    <body>
+        
+        <div id="codate-container"></div>
+        
+        <script id="codate-template" type="text/x-kendo-template">
+            <header>
+                <ul id="menu" data-role="menu">
+                    <li><a href="#/consulta">Consulta</a></li>
+                    <li>Cadastro
+                        <ul>
+                            <li><a href="#/produtor">Produtor</a></li>
+                            <li><a href="#/fazenda">Fazenda</a></li>
+                        </ul>
+                    </li>
+                </ul>        
+            </header>
+            <div id="conteudo">
+            </div>
+            <footer>
+                Copyright © 2013 Codate
+            </footer>
+        </script>
+        
+        <script id="codate-consulta" type="text/x-kendo-template">
+            <h1>Consulta</h1>
+            <table 
+                data-role="grid" 
+                data-height="250"
+                data-sortable="true"
+                data-selectable="false"
+                data-pageable="{refresh: true, pageSizes: false}" 
+                data-columns="[
+                    {field: 'cpfCnpj', title: 'CPF/CNPJ', width: '70px'},
+                    {field: 'nomeRazao', title: 'Nome/Razão Social', width: '100px'},
+                    {field: 'tipoPessoa', title: 'Tipo', width: '75px'},
+                    {command : [
+                        {name : 'editar', template : kendo.template($('#codate-acaoeditar').html())},
+                        {name : 'excluir', template : kendo.template($('#codate-acaoexcluir').html())}], 
+                        title : '', width: '100px'}]"
+                data-bind="source: listaProdutor" />
+        </script>
+        
+        <script id="codate-produtor" type="text/x-kendo-template">
+            <h1>Produtor</h1>
+            <span id="msg"></span>
+			<div class="codate-form">
+                <label>Pessoa</label>
+                <div>
+                    <select 
+                        data-role="dropdownlist"
+                        data-value-field="value"
+                        data-text-field="text"
+                        data-bind="source: listaTipoPessoa, value: model.tipoPessoa" 
+                        class="codate-pequeno"/>                    
+                </div>
+				
+				<label>CPF/CNPJ</label>
+				<div>
+					<input name="cpfCnpj" required="required" validationMessage="CPF/CNPJ é obrigatório" class="k-textbox codate-medio" data-bind="value: model.cpfCnpj" />
+                    <span class="k-invalid-msg" data-for="cpfCnpj" />
+				</div>
+				
+				<label>Nome/Razão Social</label>
+				<div>
+					<input name="nomeRazao" class="k-textbox codate-grande" required="required" validationMessage="Nome/Razão Social é obrigatório" data-bind="value : model.nomeRazao" />
+                    <span class="k-invalid-msg" data-for="nomeRazao" />
+				</div>
+				
+				<label>Inscrição Estadual</label>
+				<div>
+					<input name="inscricaoEstadual" required="required" validationMessage="Inscrição estadual é obrigatório" class="k-textbox codate-medio" data-bind="value: model.inscricaoEstadual" />
+                    <span class="k-invalid-msg" data-for="inscricaoEstadual" />
+				</div>
+				
+				<label>Logradouro</label>
+				<div> 
+					<input name="logradouro" required="required" validationMessage="Logradouro é obrigatório" class="k-textbox codate-grande" data-bind="value: model.logradouro" />
+                    <span class="k-invalid-msg" data-for="logradouro" />
+ 
+					<input name="numero" class="k-textbox codate-pequeno" data-bind="value: model.numero" />
+
+					<input name="complemento" class="k-textbox codate-pequeno" data-bind="value: model.complemento" />
+                    <span class="k-invalid-msg" data-for="complemento" />
+
+				</div>
+				 
+				<label>CEP</label>
+				<div>
+					<input name="cep" required="required" validationMessage="CEP é obrigatório" class="k-textbox codate-medio" data-bind="value: model.cep" />
+                    <span class="k-invalid-msg" data-for="cep" />
+
+				</div>
+				
+				<label>Municipio</label>
+				<div>
+					<input name="municipio" required="required" validationMessage="Município é obrigatório" class="k-textbox codate-grande" data-bind="value: model.municipio" /> 
+					<select 
+                        data-role="dropdownlist"
+                        data-value-field="value"
+                        data-text-field="text"
+                        data-bind="source: listaEstado, value: model.estado" 
+                        class="codate-pequeno"/>   
+				</div>
+					
+				<label>Telefone</label>
+				<div>
+					<input name="telefone" class="k-textbox codate-medio" data-bind="value: model.telefone" required="required" validationMessage="O telefone é obrigatório" />
+                    <span class="k-invalid-msg" data-for="telefone"></span>
+				</div>
+				
+				<label>Email</label>
+				<div>      
+					<input type="email" name="email" data-email-msg="Email inválido" class="k-textbox codate-grande" data-bind="value: model.email" />
+				</div>
+				
+			</div>
+			<div class="codate-barrabotao">
+				<button class="k-button" data-bind="click: confirmar">Confirmar</button>
+				<button class="k-button" data-bind="click: cancelar">Cancelar</button>
+			</div>
+        </script> 
+          
+        <script id="codate-fazenda" type="text/x-kendo-template">
+            <h1>Fazenda</h1>
+            <div class="codate-form">
+                <label>Produtor</label>
+                <div>
+                    <select 
+                        data-role="dropdownlist"
+                        data-value-field="id"
+                        data-text-field="nomeRazao"
+                        data-bind="source: listaProdutor, value: model.produtor" 
+                        class="codate-grande"/>                    
+                </div>
+                
+                <label>Nome da Fazenda</label>
+                <div>
+                    <input class="k-textbox codate-medio" data-bind="value: model.nome" />
+                </div>
+
+                <label>Matrícula</label>
+                <div>
+                    <input class="k-textbox codate-medio" data-bind="value: model.matricula" />
+                </div>
+
+                <label>Area</label>
+                <div>
+                    <input class="k-textbox codate-pequeno" data-bind="value: model.area" />
+                </div>
+                
+                <label>Municipio</label>
+                <div>
+                    <input class="k-textbox codate-grande" data-bind="value: model.municipio" /> 
+                    <select 
+                        data-role="dropdownlist"
+                        data-value-field="value"
+                        data-text-field="text"
+                        data-bind="source: listaEstado, value: model.estado" 
+                        class="codate-pequeno"/> 
+                </div>
+                
+            </div>
+            <div class="codate-barrabotao">
+                <button class="k-button" data-bind="click: confirmar">Confirmar</button>
+                <button class="k-button" data-bind="click: cancelar">Cancelar</button>
+            </div>
+        </script>     
+        
+        <script id="codate-acaoeditar" type="text/x-kendo-template">
+            <button class="k-button" data-bind="click: editar">Editar</button>
+        </script> 
+        
+        <script id="codate-acaoexcluir" type="text/x-kendo-template">
+            <button class="k-button" data-bind="click: excluir">Excluir</button>
+        </script>               
+                
+    </body>
+</html>

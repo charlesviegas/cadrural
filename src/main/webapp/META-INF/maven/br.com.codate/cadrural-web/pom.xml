@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cadrural</artifactId>
+        <groupId>br.com.codate</groupId>
+        <version>1.00</version>
+    </parent>
+    <artifactId>cadrural-web</artifactId>
+    <packaging>war</packaging>
+    <name>cadrural-web</name>
+    <dependencies>
+        <dependency>
+            <groupId>br.com.codate</groupId>
+            <artifactId>cadrural-utils</artifactId>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>br.com.codate</groupId>
+            <artifactId>cadrural-neg</artifactId>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>		
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>javarebel-maven-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <classesDirectory>${basedir}/target/classes</classesDirectory>
+                    <web>
+                        <resources>
+                            <resource>
+                                <target>/</target>
+                                <directory>${basedir}/src/main/webapp</directory>
+                            </resource>
+                            <resource>
+                                <target>js/</target>
+                                <directory>${basedir}/src/main/webapp/js</directory>
+                            </resource>
+                            <resource>
+                                <target>js/libs/</target>
+                                <directory>${basedir}/src/main/webapp/js/libs</directory>
+                            </resource>
+                            <resource>
+                                <target>style/</target>
+                                <directory>${basedir}/src/main/webapp/style</directory>
+                            </resource>
+                        </resources>
+                    </web>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jboss</id>
+            <build>
+                <finalName>cadrural</finalName>
+                <plugins>
+                    <!-- Faz o deploy da aplicacao no jboss (O Jboss deve estar no ar) -->
+                    <plugin>
+                        <groupId>org.jboss.as.plugins</groupId>
+                        <artifactId>jboss-as-maven-plugin</artifactId>
+                        <version>7.2.Final</version>
+                        <executions>
+
+                            <!-- Undeploy da aplicacao quando rodar o clean -->
+<!--                             <execution> -->
+<!--                                 <id>undeployJBoss</id> -->
+<!--                                 <phase>clean</phase> -->
+<!--                                 <goals> -->
+<!--                                     <goal>undeploy</goal> -->
+<!--                                 </goals> -->
+<!--                                 <configuration> -->
+<!--                                     <ignoreMissingDeployment>true</ignoreMissingDeployment> -->
+<!--                                 </configuration> -->
+<!--                             </execution> -->
+
+                            <!-- Deploy da aplicacao quando rodar o install -->
+                            <execution>
+                                <id>deployJBoss</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <hostname>${myJbossHost}</hostname>
+                                    <port>9999</port>
+                                    <fileName>${project.build.directory}/${project.build.finalName}.${project.packaging}</fileName>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

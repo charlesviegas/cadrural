@@ -1,0 +1,44 @@
+footer{
+    text-align : center;
+}
+
+#conteudo {
+    height : 700px;
+}
+
+.codate-form label {
+    display: block;
+}
+
+.codate-form div {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.codate-barrabotao {
+    text-align : left;
+}
+
+.codate-barrabotao button {
+    margin-right : 5px;
+}
+
+.codate-pequeno {
+    width: 80pt;
+}
+
+.codate-medio {
+    width: 160pt;
+}
+
+.codate-grande {
+    width: 240pt;
+}
+
+.codate-sucesso {
+    color: green;
+}
+
+.codate-erro {
+    color: red;
+}
