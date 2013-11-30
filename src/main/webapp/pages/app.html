@@ -31,7 +31,7 @@
 
                     </div>
 
-                    <div id="consulta">
+                    <div id="consulta" class="content-secondary">
                         <table
                             id="consultaGrid" 
                             data-role="grid" 
@@ -41,13 +41,13 @@
                             data-filterable="{extra : false, messages : {info: 'Digite: ', filter: 'Filtrar', clear: 'Limpar'}, operators : {string: {startswith: 'Começa com' }}}"  
                             data-toolbar="[{ template: kendo.template($('#codate-acaoincluir').html()) }]"
                             data-columns="[
-                                {field: 'cpfCnpj', title: 'CPF/CNPJ', width: '70px'},
-                                {field: 'nomeRazao', title: 'Nome/Razão Social', width: '100px'},
-                                {field: 'tipoPessoa', title: 'Tipo', width: '75px'},
+                                {field: 'cpfCnpj', title: 'CPF/CNPJ', width: '25%'},
+                                {field: 'nomeRazao', title: 'Nome/Razão Social', width: '25%'},
+                                {field: 'tipoPessoa', title: 'Tipo', width: '25%'},
                                 {command : [
                                     {name : 'editar', template : kendo.template($('#codate-acaoeditar').html())},
                                     {name : 'excluir', template : kendo.template($('#codate-acaoexcluir').html())}], 
-                                    title : '', width: '100px'}]"
+                                    title : '', width: '25%'}]"
                             data-bind="source: listaProdutor" />
                     </div>
 
