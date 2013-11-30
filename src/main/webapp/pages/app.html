@@ -182,18 +182,22 @@
                         <label>Produtor</label>
                         <div>
                             <select 
+                                name="produtorSel"
                                 data-role="dropdownlist"
                                 data-value-field="id"
                                 data-text-field="nomeRazao"
                                 data-option-label="Selecione" 
                                 data-option-value="-1"
-                                data-bind="source: listaProdutor, value: model.produtor" />                    
+                                required="required" validationMessage="O Produtor é obrigatório"
+                                data-bind="source: listaProdutor, value: model.produtor" /> 
+                            <span class="k-invalid-msg" data-for="produtorSel"></span>                   
                         </div>
                     </div>
                     <div class="col-md-8">
                         <label>Nome da Fazenda</label>
                         <div>
-                            <input class="form-control input-md" data-bind="value: model.nome" />
+                            <input name="nomeInp" class="form-control input-md" data-bind="value: model.nome" required="required" validationMessage="O Nome da Fazenda é obrigatório" />
+                            <span class="k-invalid-msg" data-for="nomeInp"></span>
                         </div>
                     </div>
                 </div>
@@ -203,19 +207,22 @@
                     <div class="col-md-3">
                         <label>Matrícula</label>
                         <div>
-                            <input class="form-control input-md" data-bind="value: model.matricula" />
+                            <input name="matriculaInp" class="form-control input-md" data-bind="value: model.matricula" required="required" validationMessage="A Matrícula é obrigatória" />
+                            <span class="k-invalid-msg" data-for="matriculaInp"></span>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <label>Area</label>
                         <div>
-                            <input class="form-control input-md" data-bind="value: model.area" />
+                            <input name="areaInp" data-role="numerictextbox" min="0" data-format="n2" class="form-control input-md" data-bind="value: model.area" required="required" validationMessage="A Área é obrigatória" />
+                            <span class="k-invalid-msg" data-for="areaInp"></span>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <label>Municipio</label>
                         <div>
-                            <input class="form-control input-md" data-bind="value: model.municipio" />
+                            <input name="municipio" class="form-control input-md" data-bind="value: model.municipio" required="required" validationMessage="O Município é obrigatório" />
+                            <span class="k-invalid-msg" data-for="municipio"></span>
                         </div>
                     </div>
                     <div class="col-md-3"> 
