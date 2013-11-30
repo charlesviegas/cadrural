@@ -9,196 +9,196 @@ codate.layout = {};
 codate.viewmodel = {};
 codate.datasource = {};
 codate.model = {};
+codate.url = {};
 
 
 //---------------------------------------------------------------
-// Model
+// URL: dos servicos JAVA-REST
 
-codate.model.Produtor = kendo.data.Model.define({
+codate.url.servicoProdutor = "/cadrural/servicos/produtor";
+codate.url.servicoFazenda = "/cadrural/servicos/fazenda";
+
+
+//---------------------------------------------------------------
+//Model: Modelo das informacoes a serem trocadas entre os servicos e Aplicacao Front-End
+
+codate.model.Produtor = kendo.data.Node.define({
     id : "id",
+    
+    hasChildren: "possuiFazenda",
+    
+    children: codate.datasource.Fazenda,
+    
     fields : {
-        id : {
-            editable : false,
-            nullable : true
-        },
-        tipoPessoa : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : "JURIDICA"
-        },
-        cpfCnpj : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        nomeRazao : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        inscricaoEstadual : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        logradouro : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        numero : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        complemento : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        municipio : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        estado : {
-            validation : {
-                required : true
-            },
-            defaultValue : "MS"
-        },
-        cep : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        telefone : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        },
-        email : {
-            type : "string",
-            validation : {
-                required : false
-            },
-            defaultValue : null
-        }
+       id : {
+           editable : false,
+           nullable : true
+       },
+       tipoPessoa : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : "JURIDICA"
+       },
+       cpfCnpj : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       nomeRazao : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       logradouro : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       numero : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       municipio : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       estado : {
+           validation : {
+               required : true
+           },
+           defaultValue : "MS"
+       },
+       telefone : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       },
+       email : {
+           type : "string",
+           validation : {
+               required : false
+           },
+           defaultValue : null
+       }
     }
 });
 
 
-codate.model.Fazenda = kendo.data.Model.define({
+codate.model.Fazenda = kendo.data.Node.define({
     id : "id",
+    hasChildren: false,
     fields : {
-        id : {
-            type : "number",
-            defaultValue : null,
-            editable : false
-        },
-        nome : {
-            type : "string",
-            defaultValue : null,
-            validation : {
-                required : true
-            }
-        },
-        area : {
-            type : "number",
-            defaultValue : 0.0,
-            validation : {
-                required : false
-            }
-        },
-        matricula : {
-            type : "string",
-            defaultValue : null,
-            validation : {
-                required : true
-            }
-        },
-        municipio : {
-            type : "string",
-            defaultValue : null,
-            validation : {
-                required : true
-            }
-        },
-        estado : {
-            type : "string",
-            defaultValue : "MS",
-            validation : {
-                required : true
-            }
-        },
-        produtor: {
-            defaultValue : null
-        }
+       id : {
+           type : "number",
+           defaultValue : null,
+           editable : false
+       },
+       nome : {
+           type : "string",
+           defaultValue : null,
+           validation : {
+               required : true
+           }
+       },
+       area : {
+           type : "number",
+           defaultValue : 0.0,
+           validation : {
+               required : false
+           }
+       },
+       matricula : {
+           type : "string",
+           defaultValue : null,
+           validation : {
+               required : true
+           }
+       },
+       municipio : {
+           type : "string",
+           defaultValue : null,
+           validation : {
+               required : true
+           }
+       },
+       estado : {
+           type : "string",
+           defaultValue : "MS",
+           validation : {
+               required : true
+           }
+       },
+       produtor: {
+           defaultValue : { id : -1, nomeRazao : "Selecione"}
+       }
     }
 });
 
 
-
 //---------------------------------------------------------------
-//Data Source
+// Data Source
 
-codate.datasource.Consulta = new kendo.data.DataSource({
+codate.datasource.Produtor = new kendo.data.HierarchicalDataSource({
+    
+    requestStart : function(req){
+        kendo.ui.progress($("#consultaGrid"), true);  
+    },
+    
+    requestEnd : function(e){
+        kendo.ui.progress($("#consultaGrid"), false);  
+    },
+    
+    sync: function(req) {
+        codate.router.App.navigate("/home");
+    },
+    
+    error : function(req){
+        alert(req.xhr.responseText);
+    },
+    
     transport : {
         read : {
             type : "GET",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
-            url : "/cadrural/servicos/produtor/produtor"
+            url : codate.url.servicoProdutor
         },
-        remove : {
-            type : "DELETE",
-            dataType : "json",
-            contentType : "application/json; charset=utf-8",
-            url : function(model){
-                return "/cadrural/servicos/produtor/produtor?idProdutor=" + model.id;
-            }
-        }
-    },
-    schema : {
-        model : codate.model.Produtor
-    }
-});
-
-
-codate.datasource.Produtor = new kendo.data.DataSource({
-    transport : {
         create : {
             type : "POST",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
-            url : "/cadrural/servicos/produtor/produtor"
+            url : codate.url.servicoProdutor
         },
         update : {
             type : "PUT",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
-            url : "/cadrural/servicos/produtor/produtor"
+            url : codate.url.servicoProdutor
         },
+        destroy : {
+            type : "DELETE",
+            dataType : "json",
+            contentType : "application/json; charset=utf-8",
+            url : function(model){
+                return codate.url.servicoProdutor + "?idProdutor=" + model.id;
+            }
+        },          
         parameterMap : function(model, operation){
             if(model && (operation === "create" || operation === "update")){
                 return kendo.stringify(model);
@@ -211,34 +211,50 @@ codate.datasource.Produtor = new kendo.data.DataSource({
 	}
 });
 
-codate.datasource.Fazenda = new kendo.data.DataSource({
+codate.datasource.Fazenda = new kendo.data.HierarchicalDataSource({
+    requestStart : function(req){
+        kendo.ui.progress($("#consultaGrid"), true);  
+    },
+    
+    requestEnd : function(e){
+        kendo.ui.progress($("#consultaGrid"), false);  
+    },
+    
+    sync: function(req) {
+        codate.router.App.navigate("/home");
+    },
+    
+    error : function(req){
+        alert(req.xhr.responseText);
+    },
+    
     transport : {
         read : {
             type : "GET",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
             url : function(model){
-                return "/cadrural/servicos/produtor/fazenda?idProdutor=" + model.produtor.id;
+                return kendo.format(codate.url.servicoFazenda + "?idProdutor={0}", model.id);
             }
         },
         create : {
             type : "POST",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
-            url : "/cadrural/servicos/produtor/fazenda"
+            url : codate.url.servicoFazenda
         },
         update : {
             type : "PUT",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
-            url : "/cadrural/servicos/produtor/fazenda"
+            url : codate.url.servicoFazenda
         },
-        remove : {
+        destroy : {
             type : "DELETE",
             dataType : "json",
             contentType : "application/json; charset=utf-8",
             url : function(model){
-                return "/cadrural/servicos/produtor/fazenda?idFazenda=" + model.id;
+                return codate.url.servicoFazenda + "?idFazenda=" + model.id;
             }
         },
         parameterMap : function(model, operation){
@@ -290,79 +306,114 @@ codate.datasource.TipoPessoa = new kendo.data.DataSource({
 });
 
 
+
+
 //---------------------------------------------------------------
 // View Model
 
 codate.viewmodel.Consulta = kendo.observable({
-    listaProdutor : codate.datasource.Consulta,
-
+    
+    listaProdutor : codate.datasource.Produtor,
+    
+    desabilitaGrid : false,
+    
+    // Garante que ao abrir a tela o datasource leia as informacoes do servico
     abrir : function(){
-        codate.datasource.Consulta.read();
+        this.get("listaProdutor").read();
     },
 
     excluir : function(evt){
-        codate.datasource.Consulta.remove(evt.data);
-        codate.datasource.Consulta.sync();
+        //kendo.ui.progress($("#consultaGrid"), true);
+        this.get("listaProdutor").remove(evt.data);
+        this.get("listaProdutor").sync();
+        //kendo.ui.progress($("#consultaGrid"), false);
     },
 
     editar : function(evt){
         var produtorsel = evt.data;
-        //var produtorsel = evt.sender.dataItem(evt.sender.select());
-        codate.viewmodel.Produtor.passarParametro(produtorsel);
-        codate.router.App.navigate("/produtor");
+        codate.router.App.navigate("/produtor/" + produtorsel.id);
     }
 });
 
 codate.viewmodel.Produtor = kendo.observable({
     model : null,
+    
+    listaProdutor : codate.datasource.Produtor,
     listaTipoPessoa : codate.datasource.TipoPessoa,
     listaEstado : codate.datasource.Estado,
-    parametros : null,
 
-    passarParametro : function(param){
-        this.set("parametros", param);
-    },
-
-    abrir : function(){
-        // Se tiver parametro é pq foi passado antes de abrir
-        if(this.get("parametros")){
-            this.set("model", this.get("parametros"));
-            this.set("parametros", null);
-        }
-        else{
-            this.set("model", new codate.model.Produtor());
-        }
+    // Carrega os dados do produtor existente ou cria um novo produtor para ser inserido
+    abrir : function(id){
+        var nmodel = (id) ? this.get("listaProdutor").get(id) : new codate.model.Produtor();
+        this.set("model", nmodel);
     },
 
     confirmar : function(){
-        var validator = $(".codate-form").kendoValidator().data("kendoValidator");
+        var ds, index, model, 
+            validator = $(".codate-form").kendoValidator().data("kendoValidator");
+        
         if (validator.validate()) {
-            var varmodel = this.get("model");
-            codate.datasource.Produtor.insert(0,varmodel);
-            codate.datasource.Produtor.sync();
-            codate.router.App.navigate("/consulta");
+            
+            ds = this.get("listaProdutor");
+            model = this.get("model");
+            index = ds.indexOf(model);
+
+            // Eh uma alteracao
+            if(index > -1){
+                ds.insert(index, model);
+            }
+            else{
+                ds.add(model);
+            }
+            ds.sync();
         }
     },
 
     cancelar : function(){
-        codate.router.App.navigate("/consulta");
+        this.get("model", null);
+        codate.router.App.navigate("/home");
     }
-
+    
 });
 
 codate.viewmodel.Fazenda = kendo.observable({
 
-    model : new codate.model.Fazenda(),
+    model : null,
+    
+    listaProdutor : codate.datasource.Produtor,
+    listaFazenda : codate.datasource.Fazenda,
     listaEstado : codate.datasource.Estado,
-    listaProdutor : codate.datasource.Consulta,
 
+    // Carrega os dados da fazenda existente ou cria um novo produtor para ser inserido
+    abrir : function(id){
+        var nmodel = (id) ? this.get("listaFazenda").get(id) : new codate.model.Fazenda();
+        this.set("model", nmodel);
+    },
+    
     confirmar : function(){
-        var varmodel = this.get("model");
-        codate.datasource.Fazenda.insert(0,varmodel);
-        codate.datasource.Fazenda.sync();
+        var ds, index, model, 
+        validator = $(".codate-form").kendoValidator().data("kendoValidator");
+    
+        if (validator.validate()) {
+            
+            ds = this.get("listaFazenda");
+            model = this.get("model");
+            index = ds.indexOf(model);
+    
+            // Eh uma alteracao
+            if(index > -1){
+                ds.insert(index, model);
+            }
+            else{
+                ds.add(model);
+            }
+            ds.sync();
+        }
     },
 
     cancelar : function(){
+        this.get("model", null);
+        codate.router.App.navigate("/home");
     }
 
 });
@@ -370,8 +421,8 @@ codate.viewmodel.Fazenda = kendo.observable({
 //---------------------------------------------------------------
 // Layout e View
 
-codate.layout.Template = new kendo.Layout("codate-template");
-codate.view.Consulta = new kendo.View("codate-consulta", { model : codate.viewmodel.Consulta});
+codate.layout.Template = new kendo.Layout("codate-template", { model : codate.viewmodel.Consulta});
+codate.view.Home = new kendo.View("codate-home");
 codate.view.Produtor = new kendo.View("codate-produtor", { model : codate.viewmodel.Produtor});
 codate.view.Fazenda = new kendo.View("codate-fazenda", { model : codate.viewmodel.Fazenda});
 
@@ -382,21 +433,23 @@ codate.view.Fazenda = new kendo.View("codate-fazenda", { model : codate.viewmode
 
 codate.router.App = new kendo.Router({
     init : function(){
+        codate.viewmodel.Consulta.abrir();
         codate.layout.Template.render("#codate-container");
     }
 });
 
-codate.router.App.route("/consulta", function(){
+codate.router.App.route("/home", function(){
     codate.viewmodel.Consulta.abrir();
-    codate.layout.Template.showIn("#conteudo", codate.view.Consulta);
+    codate.layout.Template.showIn("#conteudo", codate.view.Home);
 });
 
-codate.router.App.route("/produtor", function(){
-    codate.viewmodel.Produtor.abrir();
+codate.router.App.route("/produtor(/:id)", function(id){
+    codate.viewmodel.Produtor.abrir(id);
     codate.layout.Template.showIn("#conteudo", codate.view.Produtor);
 });
 
-codate.router.App.route("/fazenda", function(){
+codate.router.App.route("/fazenda(/:id)", function(id){
+    codate.viewmodel.Fazenda.abrir(id);
     codate.layout.Template.showIn("#conteudo", codate.view.Fazenda);
 });
 

@@ -25,19 +25,11 @@ public class ProdutorNegocio {
     @DAO
     @Inject
     private GenericDAO<Produtor> produtorDAO;
-
-    @DAO
-    @Inject
-    private GenericDAO<Fazenda> fazendaDAO;
+    
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Produtor> buscarProdutor() {
-	return produtorDAO.findAll();
-    }
-
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public List<Fazenda> buscarFazenda(Long idProdutor) {
-	return fazendaDAO.queryList(Fazenda.BUSCA_FAZENDA_POR_PRODUTOR, idProdutor);
+	return produtorDAO.queryList(Produtor.BUSCA_TODOS_PRODUTORES);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -47,25 +39,23 @@ public class ProdutorNegocio {
 	    throw new CpfCnpjJaExisteException("Ja existe um produtor com mesmo cpf/cnpj");
 	}
 	Produtor produtorInserido = produtorDAO.insert(produtor);
-	return produtorInserido;
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Fazenda inserirFazenda(Fazenda fazenda) {
-	Fazenda fazendaInserido = fazendaDAO.insert(fazenda);
-	return fazendaInserido;
+	return buscarProdutorPorId(produtorInserido.getId());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Produtor alterarProdutor(Produtor produtor) {
 	Produtor produtorAlterado = produtorDAO.update(produtor);
-	return produtorAlterado;
+	return buscarProdutorPorId(produtorAlterado.getId());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Fazenda alterarFazenda(Fazenda fazenda) {
-	Fazenda fazendaAlterado = fazendaDAO.update(fazenda);
-	return fazendaAlterado;
+    public void excluirProdutor(Long idProdutor) {
+	produtorDAO.executeUpdate(Fazenda.EXCLUI_FAZENDA_POR_PRODUTOR, idProdutor);
+	produtorDAO.executeUpdate(Produtor.EXCLUI_PRODUTOR_POR_ID, idProdutor);
+    }
+    
+    private Produtor buscarProdutorPorId(Long id){
+	return produtorDAO.querySingle(Produtor.BUSCA_PRODUTOR_POR_ID, id);
     }
 
 }

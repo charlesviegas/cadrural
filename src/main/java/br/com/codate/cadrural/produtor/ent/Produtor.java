@@ -13,6 +13,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,12 +27,17 @@ import br.com.codate.cadrural.produtor.enuns.TipoPessoaEnum;
 @Entity
 @Table(name = "TB_PRODUTOR")
 @SequenceGenerator(name = "SEQ_PRODUTOR", sequenceName = "SEQ_PRODUTOR", allocationSize = 1, initialValue = 1)
-@NamedQueries({ @NamedQuery(name = Produtor.BUSCA_PRODUTOR_POR_CPF_CNPJ, query = "SELECT COUNT(p) FROM Produtor p WHERE p.cpfCnpj = ?1"),
+@NamedQueries({
+        @NamedQuery(name = Produtor.BUSCA_PRODUTOR_POR_CPF_CNPJ, query = "SELECT COUNT(p) FROM Produtor p WHERE p.cpfCnpj = ?1"),
+        @NamedQuery(name = Produtor.BUSCA_PRODUTOR_POR_ID, query = "SELECT new Produtor(p.id, p.tipoPessoa, p.cpfCnpj, p.nomeRazao, p.logradouro, p.numero, p.municipio, p.estado, p.telefone, p.email, (SELECT COUNT(f) FROM Fazenda f WHERE f.produtor.id = p.id)) FROM Produtor p WHERE p.id = ?1"),
+        @NamedQuery(name = Produtor.BUSCA_TODOS_PRODUTORES, query = "SELECT new Produtor(p.id, p.tipoPessoa, p.cpfCnpj, p.nomeRazao, p.logradouro, p.numero, p.municipio, p.estado, p.telefone, p.email, (SELECT COUNT(f) FROM Fazenda f WHERE f.produtor.id = p.id)) FROM Produtor p ORDER BY p.nomeRazao ASC"),
         @NamedQuery(name = Produtor.EXCLUI_PRODUTOR_POR_ID, query = "DELETE FROM Produtor p WHERE p.id = ?1") })
 public class Produtor implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String EXCLUI_PRODUTOR_POR_ID = "EXCLUI_PRODUTOR_POR_ID";
+    public static final String BUSCA_TODOS_PRODUTORES = "BUSCA_TODOS_PRODUTORES";
+    public static final String BUSCA_PRODUTOR_POR_ID = "BUSCA_PRODUTOR_POR_ID";
     public static final String BUSCA_PRODUTOR_POR_CPF_CNPJ = "BUSCA_PRODUTOR_POR_CPF_CNPJ";
 
     @Id
@@ -46,9 +52,6 @@ public class Produtor implements Serializable {
     @Column(name = "CPFCNPJ", nullable = false, length = 20)
     private String cpfCnpj;
 
-    @Column(name = "INSCESTADUAL", nullable = true, length = 100)
-    private String inscricaoEstadual;
-
     @Column(name = "NOMERAZAO", nullable = false, length = 200)
     private String nomeRazao;
 
@@ -57,12 +60,6 @@ public class Produtor implements Serializable {
 
     @Column(name = "NUMERO", nullable = true, length = 20)
     private String numero;
-
-    @Column(name = "COMPLEMENTO", nullable = true, length = 100)
-    private String complemento;
-
-    @Column(name = "CEP", nullable = true, length = 20)
-    private String cep;
 
     @Column(name = "MUNICIPIO", nullable = false, length = 100)
     private String municipio;
@@ -77,6 +74,30 @@ public class Produtor implements Serializable {
     @XmlTransient
     @Column(name = "EMAIL", nullable = true, length = 100)
     private String email;
+
+    // Permite ser usado numa estrutura hierarquica
+    @Transient
+    private Boolean possuiFazenda = Boolean.FALSE;
+
+    public Produtor() {
+	super();
+    }
+
+    public Produtor(Long id, TipoPessoaEnum tipoPessoa, String cpfCnpj, String nomeRazao, String logradouro, String numero, String municipio,
+	    EstadoEnum estado, String telefone, String email, long qtdFazenda) {
+	super();
+	this.id = id;
+	this.tipoPessoa = tipoPessoa;
+	this.cpfCnpj = cpfCnpj;
+	this.nomeRazao = nomeRazao;
+	this.logradouro = logradouro;
+	this.numero = numero;
+	this.municipio = municipio;
+	this.estado = estado;
+	this.telefone = telefone;
+	this.email = email;
+	this.possuiFazenda = (qtdFazenda > 0);
+    }
 
     public Long getId() {
 	return id;
@@ -102,14 +123,6 @@ public class Produtor implements Serializable {
 	this.cpfCnpj = cpfCnpj;
     }
 
-    public String getInscricaoEstadual() {
-	return inscricaoEstadual;
-    }
-
-    public void setInscricaoEstadual(String inscricaoEstadual) {
-	this.inscricaoEstadual = inscricaoEstadual;
-    }
-
     public String getNomeRazao() {
 	return nomeRazao;
     }
@@ -132,22 +145,6 @@ public class Produtor implements Serializable {
 
     public void setNumero(String numero) {
 	this.numero = numero;
-    }
-
-    public String getComplemento() {
-	return complemento;
-    }
-
-    public void setComplemento(String complemento) {
-	this.complemento = complemento;
-    }
-
-    public String getCep() {
-	return cep;
-    }
-
-    public void setCep(String cep) {
-	this.cep = cep;
     }
 
     public String getMunicipio() {
@@ -182,6 +179,14 @@ public class Produtor implements Serializable {
 	this.email = email;
     }
 
+    public Boolean getPossuiFazenda() {
+	return possuiFazenda;
+    }
+
+    public void setPossuiFazenda(Boolean possuiFazenda) {
+	this.possuiFazenda = possuiFazenda;
+    }
+
     @Override
     public String toString() {
 	StringBuilder builder = new StringBuilder();
@@ -191,18 +196,12 @@ public class Produtor implements Serializable {
 	builder.append(tipoPessoa);
 	builder.append(", cpfCnpj=");
 	builder.append(cpfCnpj);
-	builder.append(", inscricaoEstadual=");
-	builder.append(inscricaoEstadual);
 	builder.append(", nomeRazao=");
 	builder.append(nomeRazao);
 	builder.append(", logradouro=");
 	builder.append(logradouro);
 	builder.append(", numero=");
 	builder.append(numero);
-	builder.append(", complemento=");
-	builder.append(complemento);
-	builder.append(", cep=");
-	builder.append(cep);
 	builder.append(", municipio=");
 	builder.append(municipio);
 	builder.append(", estado=");
